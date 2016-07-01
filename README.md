@@ -15,7 +15,7 @@ If you are interested in how to use these tools, check out [this blog post](http
 
 
 ## License
-This Docker images contain source code of SciDB in scidb-15.12.1.4cadab5.tar.gz. SciDB is copyright (C) 2008-2016 SciDB, Inc and licensed
+These Docker images contain source code of SciDB. SciDB is copyright (C) 2008-2016 SciDB, Inc and licensed
 under the AFFERO GNU General Public License as published by the Free Software Foundation. You should have received a copy of the AFFERO GNU General Public License. If not, see <http://www.gnu.org/licenses/agpl-3.0.html>
 
 License of the Docker images can be found in the `LICENSE` file.
