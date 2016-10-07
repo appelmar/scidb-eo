@@ -7,26 +7,26 @@ echo -e "\n\nStarting required services..."
 /usr/sbin/sshd -D >/dev/null &
 echo -e "... sshd started"
 
-#/etc/init.d/postgresql start >/dev/null
-#sleep 2
-#echo -e "... postgresql started"
+service postgresql start >/dev/null
+sleep 2
+echo -e "... postgresql started"
 
-#su - scidb -c"${SCIDB_BIN}/scidb.py startall scidb_docker" >/dev/null
-#sleep 5
-#echo -e "... scidb started"
+su - scidb -c"${SCIDB_BIN}/scidb.py startall scidb_docker" >/dev/null
+sleep 5
+echo -e "... scidb started"
 
-#su - scidb -c"shim" >/dev/null
-#sleep 2
-#echo -e "... shim started"
+service shimsvc start >/dev/null
+sleep 2
+echo -e "... shim started"
 
 
 #rstudio-server start
 #sleep 3
 #echo -e "... rstudio-server started"
 
-#RUN R CMD Rserve
-#sleep 3
-#echo -e "... rserve started"
+RUN R CMD Rserve
+sleep 3
+echo -e "... rserve started"
 
 
 #su - scidb -c"${SCIDB_BIN}/iquery -anq \"load_library('r_exec');\""

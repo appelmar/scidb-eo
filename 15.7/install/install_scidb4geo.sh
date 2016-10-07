@@ -1,6 +1,6 @@
 #!/bin/bash
 
-apt-get install --no-install-recommends -y libboost-dev libcurl4-openssl-dev
+apt-get install --no-install-recommends -y libboost-dev libcurl4-openssl-dev libpqxx3-dev gcc-4.9 g++-4.9 liblog4cxx10-dev
 
 
 cd /tmp
