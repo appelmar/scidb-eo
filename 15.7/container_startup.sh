@@ -11,7 +11,7 @@ service postgresql start >/dev/null
 sleep 2
 echo -e "... postgresql started"
 
-su - scidb -c"${SCIDB_BIN}/scidb.py startall scidb_docker" >/dev/null
+su - scidb -c"scidb.py startall scidb_docker" >/dev/null
 sleep 5
 echo -e "... scidb started"
 
