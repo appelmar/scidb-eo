@@ -8,7 +8,7 @@ large Earth observation datasets.
 
 This repositories contains [Docker](https://www.docker.com/) images that run different versions of SciDB. 15.7 has been tested the most extensively. Detailed instructions how to run the images can be found in separate `README.md` files in each subfolder.
 
-The images contain [SciDB](http://www.paradigm4.com/) and its web service [Shim](https://github.com/Paradigm4/shim), the [scidb4geo](https://github.com/mappl/scidb4geo) extension for spacetime arrays, a [GDAL driver](https://github.com/mappl/scidb4gdal) to ingest and download Earth Observation datasets, [R](https://www.r-project.org), and [r_exec](https://github.com/Paradigm4/r_exec) to run R within database queries.
+The images contain [SciDB](http://www.paradigm4.com/) and its web service [Shim](https://github.com/Paradigm4/shim), the [scidb4geo](https://github.com/appelmar/scidb4geo) extension for spacetime arrays, a [GDAL driver](https://github.com/appelmar/scidb4gdal) to ingest and download Earth Observation datasets, [R](https://www.r-project.org), and [r_exec](https://github.com/Paradigm4/r_exec) to run R within database queries.
 
 If you are interested in how to use these tools, check out [this blog post](http://r-spatial.org/r/2016/05/11/scalable-earth-observation-analytics.html).
 

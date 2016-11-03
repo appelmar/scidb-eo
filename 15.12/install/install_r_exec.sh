@@ -4,7 +4,7 @@
 #apt-get install -qq --fix-missing -y --force-yes scidb-14.12-libboost1.54-all-dev liblog4cxx10-dev libpqxx3-dev
 Rscript --vanilla -e 'install.packages(c("Rserve"), repos="http://cran.rstudio.com/")'
 R CMD Rserve
-git clone https://github.com/mappl/r_exec.git --branch dev-15.12
+git clone https://github.com/appelmar/r_exec.git --branch dev-15.12
 cd r_exec 
 make SCIDB=/opt/scidb/15.12
 cp *.so /opt/scidb/15.12/lib/scidb/plugins
