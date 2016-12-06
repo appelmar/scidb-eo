@@ -4,7 +4,7 @@
 #cd ~ 
 apt-get install -y --force-yes --no-install-recommends ruby-dev # for fpm / deb package building
 
-git clone https://github.com/Paradigm4/shim
+git clone https://github.com/Paradigm4/shim --branch v15.12
 cd shim
 
 protoc --proto_path=src/network/proto --cpp_out=src/network/proto src/network/proto/scidb_msg.proto
