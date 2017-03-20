@@ -1,77 +1,90 @@
-# scidb-gis
-A Docker container for SciDB and its GIS interfaces.
+# scidb-eo
+Docker Images for Earth Observation Analytics with SciDB
+
+---
+
+
+## Prerequisites
+- [Docker Engine](https://www.docker.com/products/docker-engine) (>1.10.0) 
+- Around 15 GBs free disk space 
+- Internet connection to download software and dependencies
+
 
 ## Getting started
 
+_**Note**: Depending on your Docker configuration, the following commands must be executed with sudo rights._
 
-Before building the Docker image, you should check and modify some setttings in following files:
+### 1. Build the Docker image (1-2 hours)
 
-### 1. Preparation
-1. Open `Dockerfile` and set a secure password in line 5.
-2. `conf/scidb_docker.ini` is the SciDB configuration file. Depending on your hardware, you might change the number of instances, threads, and main memory limits (see [SciDB manual](http://www.paradigm4.com/HTMLmanual/14.8/scidb_ug/ch02s06s02.html) for details on configuration parameters).
-3. `install.sh` is a bash script that automatically builds the Docker image and deploys a corresponding container afterwards. To change names of the image and the running container, to change port forwarding, and to add further Docker constraints (e.g. on main memory consumption or available CPU cores).
+The provided Docker image is based on a minimally sized Ubuntu OS. Among others, it includes the compilation and installation of [SciDB](http://www.paradigm4.com/), [GDAL](http://gdal.org/), SciDB extensions ([scidb4geo](https://github.com/appelmar/scidb4geo),  [scidb4gdal](https://github.com/appelmar/scidb4gdal)) and the installation of all dependencies. The image will take around 15 GBs of disk space. It can be created by executing:
 
-Please notice that we do not recommended to forward the SciDB port (1239) as no user authentication is needed to connect to the databases so far.
+```
+git clone https://github.com/appelmar/scidb-eo && cd scidb-eo/15.12
+docker build --tag="scidb-eo:15.12" . # don't miss the dot
+``` 
 
-### 2. Building the image and running a container
-Building the image and deploying a container is as simple as
-
-`./install.sh`.
-
-Depending on your Docker configuration, you might need to run this with sudo rights.
+_Note that by default, this includes a rather careful SciDB configuration with relatively little demand for main memory. You may modify `conf/scidb_docker.ini` if you have a powerful machine._
 
 
+### 2. Start a container 
 
-### 3. Install software in the container
+The following command starts a cointainer in detached mode, i.e. it will run as a service until it is explicitly stopped with `docker stop scidbeo-scalbf`.
 
-1. Login to the container as root user with `ssh -p SSHPORT  root@localhost` where you need to replace SSHPORT with the corresponding port forwarding settings in `install.sh`. 
-2. Change the directory to `cd /home/root/install`. This directory contains a few scripts to install software inside the container.
-3. Install the following software (in recommended order):
-    1. SciDB `./install_scidb.sh`
-	2. Shim `./install_shim.sh`
-	3. scidb4geo `./install_scidb4geo.sh`
-	4. scidb4gdal `./install_scidb4gdal.sh`
-	5. R`./install_R.sh`
-	6. r_exec `./install_r_exec.sh`
-4. The container should now run SciDB and developed GIS tools.
+_Note that the following command limits the number of CPU cores and main memory available to the container. Feel free to use different settings for `--cpuset-cpu` and `-m`._
 
 
+```
+sudo docker run -d --name="scidb-eo-1512" --cpuset-cpus="0,1" -m "4G" -h "scidb-eo-1512" -p 33330:22 -p 33331:8083 -p 33332:8787 scidb-eo:15.12
+```
+
+The container is now accessible to the host system via SSH (port 33330), Shim (port 33331), and Rstudio Server (port 33332).
 
 
+### 3. Clean up
+To clean up your system, you can remove containers and the image with
+
+1. `sudo docker rm -f scidb-eo-1512`  and 
+2. `sudo docker rmi scidb-eo:15.12`.
+
+	
+	
 ## Files
-Below, a list of files and their description can be found.
 
 | File        | Description           |
 | :------------- | :-------------------------------------------------------| 
 | install/ | Directory for installation scripts |
-| install/install_scidb.sh | Installs SciDB 14.12 |
+| install/install_scidb.sh | Installs SciDB 15.12  from sources |
+| install/init_scidb.sh | Initializes SciDB based on provided configuration file |
 | install/install_shim.sh | Installs Shim |
 | install/install_scidb4geo.sh | Installs the scidb4geo plugin |
 | install/install_gdal.sh | Installs GDAL with SciDB driver |
 | install/install_R.sh | Installs the latest R version  |
-| install/install_r_exec.sh | Installs the r_exec SciDB plugin to run R functions in AFL queries including Rserve |
-| install/scidb-15.7.0.9267.tgz| SciDB source code |
+| install/install_r_exec.sh | Installs SciDB's r_exec plugin |
+| install/install_streaming.sh | Installs SciDB's streaming plugin |
+| install/scidb-15.12.1.4cadab5.tar.gz | SciDB 15.12 source code |
+| install/install.packages.R | Installs relevant R packages |
 | conf/ | Directory for configuration files |
 | conf/scidb_docker.ini | SciDB configuration file |
-| conf/supervisord.conf | Configuration file to manage autostarts in Docker containers |
+| conf/supervisord.conf | Configuration file to manage automatic starts in Docker containers |
 | conf/iquery.conf | Default configuration file for iquery |
 | conf/shim.conf | Default configuration file for shim |
 | Dockerfile | Docker image definition file |
-| container_startup.sh | Script that is automatically executed after the Docker container has started  |
-| install.sh | Script to create and run a new SciDB Docker container  |
+| container_startup.sh | Script that starts SciDB, Rserve, and other system services within a container  |
 
 
 
 ## License
-This Docker image contains source code of SciDB in scidb-15.12.1.4cadab5.tar.gz. SciDB is copyright (C) 2008-2016 SciDB, Inc and licensed
-under the AFFERO GNU General Public License as published by the Free Software Foundation. You should have received a copy of the AFFERO GNU General Public License
-
-If not, see <http://www.gnu.org/licenses/agpl-3.0.html>
+This Docker image contains source code of SciDB in install/scidb-15.12.1.4cadab5.tar.gz. SciDB is copyright (C) 2008-2016 SciDB, Inc. and licensed under the AFFERO GNU General Public License as published by the Free Software Foundation. You should have received a copy of the AFFERO GNU General Public License. If not, see <http://www.gnu.org/licenses/agpl-3.0.html>
 
 License of this Docker image can be found in the `LICENSE`file.
 
+## Notes
+This Docker image is for demonstration purposes only. Building the image includes both compiling software from sources and installing binaries. Some installations require downloading files which are not provided within this image (e.g. GDAL source code). If these links are not available or URLs become invalid, the build procedure might fail. 
+
+
+
 ----
 
-Authors(s)
+## Author
 
-Marius Appel - marius.appel@uni-muenster.de
+Marius Appel  <marius.appel@uni-muenster.de>

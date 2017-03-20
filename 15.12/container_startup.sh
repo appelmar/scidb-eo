@@ -1,39 +1,46 @@
 #!/bin/bash
 # This script automatically starts all relevant services on the container
 
-#export SCIDB_BIN=/opt/scidb/14.12/bin
-
 echo -e "\n\nStarting required services..."
-/usr/sbin/sshd -D >/dev/null &
+service ssh start 
+sleep 2
 echo -e "... sshd started"
 
-service postgresql start >/dev/null
-sleep 2
+
+
+
+service postgresql start
+sleep 10
 echo -e "... postgresql started"
 
-su - scidb -c"${SCIDB_BIN}/scidb.py startall scidb_docker" >/dev/null
+if [ -f /opt/SCIDB_INIT_WHEN_RESTART  ]
+then
+  /home/root/install/init_scidb.sh # re init SciDB
+  cd /opt/scidb4geo/install && yes | ./setup.sh /opt/scidb/15.12/etc/config.ini
+  rm -f /opt/SCIDB_INIT_WHEN_RESTART
+fi
+
+
+sudo -H -u scidb bash -c '/opt/scidb/15.12/bin/scidb.py stop-all scidb_docker' 
+sudo -H -u scidb bash -c '/opt/scidb/15.12/bin/scidb.py start-all scidb_docker' 
 sleep 5
 echo -e "... scidb started"
 
-service shimsvc start >/dev/null
+service shimsvc start  
 sleep 2
 echo -e "... shim started"
 
-
-#rstudio-server start
-#sleep 3
-#echo -e "... rstudio-server started"
-
-RUN R CMD Rserve
-sleep 3
+R CMD Rserve --vanilla &>/dev/null
+sleep 2
 echo -e "... rserve started"
 
+/usr/lib/rstudio-server/bin/rserver
+sleep 2
+echo -e "... rstudio-server started"
 
-#su - scidb -c"${SCIDB_BIN}/iquery -anq \"load_library('r_exec');\""
-#su - scidb -c"${SCIDB_BIN}/iquery -anq \"load_library('scidb4geo');\""
-#sleep 2
-#echo -e "... scidb plugins loaded"
+su - scidb -c"/opt/scidb/15.12/bin/iquery -anq \"load_library('r_exec');\""
+su - scidb -c"/opt/scidb/15.12/bin/iquery -anq \"load_library('scidb4geo');\""
+su - scidb -c"/opt/scidb/15.12/bin/iquery -anq \"load_library('dense_linear_algebra');\""
+#su - scidb -c"/opt/scidb/15.12/bin/iquery -anq \"load_library('stream');\""
+echo -e "... scidb plugins loaded"
 
-
-
-echo -e "DONE.\n\n"

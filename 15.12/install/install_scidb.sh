@@ -72,59 +72,11 @@ apt-get install -y --force-yes --no-install-recommends fakeroot build-essential 
 cd $SCIDB_SOURCE_PATH
 export BOOST_INCLUDEDIR=/usr/include/
 ./run.py setup -f
-./run.py make -j4
+./run.py make -j2
 
 ./deployment/deploy.sh build_fast /tmp/packages # build .deb packages
 ./deployment/deploy.sh scidb_install /tmp/packages $HOSTNAME # install to /opt/scidb/15.12
 
-# replace config.ini
-sed -i "s/localhost/$HOSTNAME/g" /home/root/conf/scidb_docker.ini
-cp /home/root/conf/scidb_docker.ini ${SCIDB_INSTALL_PATH}/etc/config.ini
 
-
-
-
-
-#su postgres -c"psql -c\"CREATE ROLE scidb SUPERUSER LOGIN CREATEROLE CREATEDB UNENCRYPTED PASSWORD '${PW}';\" "
-cd $SCIDB_SOURCE_PATH
-deployment/deploy.sh prepare_postgresql postgres $PW 0.0.0.0/0 $HOSTNAME
-su postgres -c"/opt/scidb/15.12/bin/scidb.py init-syscat scidb_docker /opt/scidb/15.12/etc/config.ini -p ${PW}"
-
-
-
-# Run SciDB as scidb system user
-
-echo $PW > /home/scidb/.scidbpw 
-chown -R scidb:scidb /home/scidb
-
-su scidb <<'EOF'
-cd ~
-export PGPASSWORD=`cat /home/scidb/.scidbpw`
-echo -e "${HOSTNAME}:5432:scidb_docker:scidb:${PGPASSWORD}\n" >> ~/.pgpass # to be removed
-chmod 0600 ~/.pgpass # this is important, otherwise file will be ignored
-/opt/scidb/15.12/bin/scidb.py initall-force scidb_docker
-echo 'PATH="/opt/scidb/15.12/bin:$PATH"' >> $HOME/.bashrc # Add scidb binaries to PATH
-/opt/scidb/15.12/bin/scidb.py startall scidb_docker
-source ~/.bashrc
-PATH=/opt/scidb/15.12/bin:$PATH
-rm /home/scidb/.scidbpw
-
-#********************************************************
-echo "***** ***** Testing installation using IQuery..."
-#********************************************************
-iquery -naq "store(build(<num:double>[x=0:4,1,0, y=0:6,1,0], random()),TEST_ARRAY)"
-iquery -aq "list('arrays')"
-iquery -aq "scan(TEST_ARRAY)"
-EOF
-
-echo -e "\nDONE. If not yet done, please remember to remove /opt/.scidbpass after finishing your SciDB cluster installation."
-
-
-
-#git clone https://github.com/Paradigm4/dev_tools
-#cd dev_tools
-#make SCIDB_VARIANT=1507
-#cp *.so /opt/scidb/15.12/lib/scidb/plugins # must be done on all nodes
-#iquery -aq "load_library('dev_tools')"
 
 

@@ -11,13 +11,13 @@ cp *.so /opt/scidb/15.12/lib/scidb/plugins
 cd ..
 rm -Rf r_exec
 
-su scidb <<'EOF'
-cd ~
-source ~/.bashrc
+#su scidb <<'EOF'
+#cd ~
+#source ~/.bashrc
 #********************************************************
-echo "***** ***** Testing installation using IQuery..."
+#echo "***** ***** Testing installation using IQuery..."
 #********************************************************
-/opt/scidb/15.12/bin/iquery -aq "load_library('r_exec')"
-/opt/scidb/15.12/bin/iquery -aq "r_exec(build(<z:double>[i=1:100,10,0],0),'expr=x<-runif(1000);y<-runif(1000);list(sum(x^2+y^2<1)/250)')"
-EOF
+#/opt/scidb/15.12/bin/iquery -aq "load_library('r_exec')"
+#/opt/scidb/15.12/bin/iquery -aq "r_exec(build(<z:double>[i=1:100,10,0],0),'expr=x<-runif(1000);y<-runif(1000);list(sum(x^2+y^2<1)/250)')"
+#EOF
 
