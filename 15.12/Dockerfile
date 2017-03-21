@@ -91,7 +91,7 @@ RUN Rscript install.packages.R
 RUN apt-get install -y -q libapparmor1
 RUN (wget https://download2.rstudio.org/rstudio-server-1.0.136-amd64.deb && gdebi -n rstudio-server-1.0.136-amd64.deb)
 
-# Install Rstudio Server
+# Install streaming plugin
 COPY install/install_streaming.sh /home/root/install/
 RUN chmod +x install_streaming.sh; sync &&  ./install_streaming.sh
 

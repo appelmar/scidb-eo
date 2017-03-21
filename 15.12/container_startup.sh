@@ -41,6 +41,6 @@ echo -e "... rstudio-server started"
 su - scidb -c"/opt/scidb/15.12/bin/iquery -anq \"load_library('r_exec');\""
 su - scidb -c"/opt/scidb/15.12/bin/iquery -anq \"load_library('scidb4geo');\""
 su - scidb -c"/opt/scidb/15.12/bin/iquery -anq \"load_library('dense_linear_algebra');\""
-#su - scidb -c"/opt/scidb/15.12/bin/iquery -anq \"load_library('stream');\""
+su - scidb -c"/opt/scidb/15.12/bin/iquery -anq \"load_library('stream');\""
 echo -e "... scidb plugins loaded"
 

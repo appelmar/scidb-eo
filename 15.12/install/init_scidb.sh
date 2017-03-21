@@ -36,14 +36,14 @@ echo "PATH=${SCIDB_INSTALL_PATH}/bin:$PATH" >> /etc/profile # appending does not
 
 # replace config.ini
 cp /home/root/conf/scidb_docker.ini ${SCIDB_INSTALL_PATH}/etc/config.ini
-sed -i "s/localhost/$HOSTNAME/g" ${SCIDB_INSTALL_PATH}/etc/config.ini
+sed -i "s/localhost/$( hostname )/g" ${SCIDB_INSTALL_PATH}/etc/config.ini
 
 
 
 
 #su postgres -c"psql -c\"CREATE ROLE scidb SUPERUSER LOGIN CREATEROLE CREATEDB UNENCRYPTED PASSWORD '${PW}';\" "
 cd $SCIDB_SOURCE_PATH
-deployment/deploy.sh prepare_postgresql postgres $PW 0.0.0.0/0 $HOSTNAME
+deployment/deploy.sh prepare_postgresql postgres $PW 0.0.0.0/0 $( hostname )
 su postgres -c"/opt/scidb/15.12/bin/scidb.py init-syscat scidb_docker /opt/scidb/15.12/etc/config.ini -p ${PW}"
 
 
@@ -56,7 +56,7 @@ chown -R scidb:scidb /home/scidb
 su scidb <<'EOF'
 cd ~
 export PGPASSWORD=`cat /home/scidb/.scidbpw`
-echo -e "${HOSTNAME}:5432:scidb_docker:scidb:${PGPASSWORD}\n" >> ~/.pgpass # to be removed
+echo -e "$( hostname ):5432:scidb_docker:scidb:${PGPASSWORD}\n" >> ~/.pgpass # to be removed
 chmod 0600 ~/.pgpass # this is important, otherwise file will be ignored
 /opt/scidb/15.12/bin/scidb.py initall-force scidb_docker
 echo 'PATH="/opt/scidb/15.12/bin:$PATH"' >> $HOME/.bashrc # Add scidb binaries to PATH
